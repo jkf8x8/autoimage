@@ -12,8 +12,7 @@ Jkf8x8\Autoimg\AutoimgServiceProvider::class,
 'Autoimg'=>Jkf8x8\Autoimg\Facades\Autoimg::class,
 
 
-`
-
+(````)
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -26,4 +25,4 @@ class Test extends Controller
         $array = Autoimg::thumb($_FILES['filename']);
     }
 }
-`
+(````)
