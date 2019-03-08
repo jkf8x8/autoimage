@@ -12,6 +12,7 @@ Jkf8x8\Autoimg\AutoimgServiceProvider::class,
 'Autoimg'=>Jkf8x8\Autoimg\Facades\Autoimg::class,
 
 
+#eg:
 ````
 namespace App\Http\Controllers;
 
