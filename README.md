@@ -10,3 +10,20 @@ Jkf8x8\Autoimg\AutoimgServiceProvider::class,
 
 ## 在$aliases数组中添加 facade 
 'Autoimg'=>Jkf8x8\Autoimg\Facades\Autoimg::class,
+
+
+`
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Autoimg;
+class Test extends Controller
+{
+    public function index(){
+        //支持多图上传
+        //return array
+        $array = Autoimg::thumb($_FILES['filename']);
+    }
+}
+`
