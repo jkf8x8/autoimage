@@ -2,7 +2,8 @@
 
 ##安装
 composer require jkf8x8/autoimg
-配置
+
+#配置
 ##config/app中
 ##在$providers中添加 providers
 Jkf8x8\Autoimg\AutoimgServiceProvider::class,
