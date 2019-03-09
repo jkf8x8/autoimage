@@ -30,8 +30,6 @@ class Autoimg{
             $randomStr = str::random(30);
             $origin = Image::make($tmpname);
             
-            $origin = $this->imageReSize($origin);
-            
             if(!empty($sizeList)){
                 $imgPathArrTmp = [];
                 foreach ($sizeList as $sizeKey => $sizeVal) {
@@ -62,14 +60,13 @@ class Autoimg{
      */
     public function imageReSize($origin,$maxWidth=720){
         $imgW = $origin->width();
-        $imgH = $origin->height();
-
         if($imgW <= $maxWidth){
             return $origin;
         }
-
-        $scale = number_format($imgW/$maxWidth,1);
-        return $origin->resize($imgW/$scale,$imgH/$scale);
+        return $origin->resize($maxWidth,null,function($constraint){
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
     }
 
     /**
