@@ -5,62 +5,53 @@ use Image;
 class Autoimg{
 
     /**
-	*上传文件/图片
-	* @FILES  $_FILES
-	* @sizeList  传入生成后的图片尺寸(可传多个值)   [width,height]  eg: [100,200] 多个值 [[100,200],[400],[800,400]]
-	*
-	* @return Array 
-	*/
-	public function thumb($FILES,array $sizeList=[]){
-		if(empty($FILES['tmp_name'])) return response()->json(['status'=>0,'message'=>config('参数无效.1003')]);
-
-		if(!is_array($FILES['tmp_name'])){
-			$imgTmpName = explode(' ',$FILES['tmp_name']);
-		}else{
-			$imgTmpName = $FILES['tmp_name'];
+    *上传文件/图片
+    * @FILES  $_FILES 
+    * @sizeList  传入生成后的图片尺寸(可传多个值)   [width,height]  eg: [100,200] 多个值 [[100,200],[400],[800,400]]
+    *
+    * @return Array 
+    */
+    public function thumb($FILES,array $sizeList=[]){
+        is_array($FILES)?($imgTmpName = $FILES ):($imgTmpName[] = $FILES);
+        if(empty($imgTmpName)) return response()->json(['status'=>0,'message'=>'参数无效.1003']);
+        $imgExt = $this->checkImgExtension($imgTmpName);
+        if(!$imgExt){
+            return response()->json(['status'=>0,'message'=>'扩展名错误.1002']);
         }
         
-        $imgExt = $this->checkImgExtension($FILES['type']);
-		if(!$imgExt){
-            return response()->json(['status'=>0,'message'=>config('扩展名错误.1002')]);
-		}
-		
+        return $this->makeImg($imgTmpName,$sizeList,$imgExt);
+    }
 
-		return $this->makeImg($imgTmpName,$sizeList,$imgExt);
-	}
-
-	protected function makeImg($imgTmpName,array $sizeList=[] ,$imgExt){
-		$imgPathArr = [];
+    protected function makeImg($imgTmpName,array $sizeList=[] ,$imgExt){
+        $imgPathArr = [];
         $dirPath = $this->makedir();
        
-		foreach($imgTmpName as $key=>$tmpname){
+        foreach($imgTmpName as $key=>$tmpname){
             $randomStr = str::random(30);
             $origin = Image::make($tmpname);
             
             $origin = $this->imageReSize($origin);
             
-			if(!empty($sizeList)){
-				$imgPathArrTmp = [];
-				foreach ($sizeList as $sizeKey => $sizeVal) {
-					$imgName = $randomStr.$sizeKey;
-					$imgPath = $dirPath.'/'.$imgName.'.'.$imgExt[$key];
-					$imgPathArrTmp[] = $imgPath;
-					
-					$origin->resize($sizeVal[0],isset($sizeVal[1])?$sizeVal[1]:$sizeVal[0])->save(public_path().$imgPath);
+            if(!empty($sizeList)){
+                $imgPathArrTmp = [];
+                foreach ($sizeList as $sizeKey => $sizeVal) {
+                    $imgName = $randomStr.$sizeKey;
+                    $imgPath = $dirPath.'/'.$imgName.'.'.$imgExt[$key];
+                    $imgPathArrTmp[] = $imgPath;
+                    
+                    $origin->resize($sizeVal[0],isset($sizeVal[1])?$sizeVal[1]:$sizeVal[0])->save(public_path().$imgPath);
 
-				}
-				$imgPathArr[] = $imgPathArrTmp;
-			}else{
+                }
+                $imgPathArr[] = $imgPathArrTmp;
+            }else{
                 $imgPath = $dirPath.'/'.$randomStr.'.'.$imgExt[$key];
                 $origin = $this->imageReSize($origin);
-				$origin->save(public_path().$imgPath);
-				$imgPathArr[] = $imgPath;
-			}
-
-			
+                $origin->save(public_path().$imgPath);
+                $imgPathArr[] = $imgPath;
+            }
         }
 
-		return $imgPathArr;
+        return $imgPathArr;
     }
     
 
@@ -78,9 +69,7 @@ class Autoimg{
         }
 
         $scale = number_format($imgW/$maxWidth,1);
-
         return $origin->resize($imgW/$scale,$imgH/$scale);
-
     }
 
     /**
@@ -89,18 +78,13 @@ class Autoimg{
     * allowType 允许的格式
     */
 
-    public function checkImgExtension($imgType,array $allowType =[]){
-        $allowType = $allowType?$allowType:['png','jpeg','gif'];
+    public function checkImgExtension($imgTmpName,array $allowType =[]){
+        $allowType = $allowType?$allowType:['png','jpeg','gif','jpg'];
         $extension = [];
         $tmpExt=[];
-
-        if(!is_array($imgType)){
-            $imgType = explode(' ',$imgType);
-        }
-
-        foreach($imgType as $val){
-            $ext = substr( $val,strripos($val,'/')+1 );
-            
+        
+        foreach($imgTmpName as $val){
+            $ext = $val->getClientOriginalExtension();   
             if(!in_array($ext,$allowType )){
                 $extension= [];
                 break;
@@ -109,8 +93,7 @@ class Autoimg{
             }
         }
 
-        return $extension;
-        
+        return $extension;        
     }
 
 
