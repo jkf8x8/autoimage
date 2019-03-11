@@ -23,7 +23,10 @@ class Test extends Controller
     public function index(){
         //支持多图上传
         //return array
-        $array = Autoimg::thumb($_FILES['filename']);
+         // $file = $request->filename;
+        // return Autoimg::thumb($filename);
+        //生成50*50头像
+        return Autoimg::thumb($filename,[[50,50]]);
     }
 }
 ````
