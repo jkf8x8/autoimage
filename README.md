@@ -24,9 +24,9 @@ class Test extends Controller
         //支持多图上传
         //return array
          // $file = $request->filename;
-        // return Autoimg::thumb($filename);
+        // return Autoimg::thumb($file);
         //生成50*50头像
-        return Autoimg::thumb($filename,[[50,50]]);
+        return Autoimg::thumb($file,[[50,50]]);
     }
 }
 ````
