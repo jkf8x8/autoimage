@@ -49,7 +49,7 @@ class Autoimg{
             }
         }
 
-        return $imgPathArr;
+        return json_encode($imgPathArr,JSON_UNESCAPED_SLASHES);
     }
     
 
